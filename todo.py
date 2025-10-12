@@ -34,12 +34,13 @@ class Project:
         Project.description = desc
     tasks = []
     Deadline : Date
-    def Add_Task(self, taskname : str):
-        new_task = Task()
-    method >> create task
-    method >> delete task
-    method >> delete project
-    method >> create project
+    def add_task(self, task_name : str):
+        new_task = Task(task_name)
+
+    # Need to define a destructor for Task
+    #def delete task
+    # Need to define a destructor for Project
+    #delete project
 
 parser = ArgumentParser()
 
