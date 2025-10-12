@@ -1,9 +1,17 @@
 #defining classes project and task
+from enum import Enum
 from argparse import ArgumentParser, Namespace
 
 from babel.dates import format_interval
 
 MAX_NUMBER_OF_PROJECT = 50
+
+class Stat(Enum):
+    todo = 0
+    doing = 1
+    done = 2
+
+
 class Date:
     year : int
     month : int
@@ -13,10 +21,12 @@ class Task:
         self.title = name
     deadline : Date
     description : str
-    def set_description(self, desc : str):
+    status : Stat
+    def set_description(self, desc : str) -> None:
         self.description = desc
-    def set_status(self, num : int):
-        self.stat = num
+    def set_status(self, num : int) -> None:
+        self.status = Stat(num)
+
 class Project:
     def __init__(self, name : str):
         Project.name = name
