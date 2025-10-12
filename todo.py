@@ -15,7 +15,7 @@ class Task():
     deadline : Date
     description : str
     Status : todo | doing | done
-class Project:
+class Project(name : str):
     Task list
     deadline date
     method >> create task
@@ -27,7 +27,11 @@ parser = ArgumentParser()
 
 parser.add_argument('add_proj', help='Add a project',
                     type= str)
-# adding verbose
-#parser.add_argument('-v', '--verbose', action=verb())
+adding verbose
+parser.add_argument('-v', '--verbose', help = 'verbose description')
 args : Namespace = parser.parse_args()
 
+if args.add_proj:
+    proj = new Project(name = args.add_proj)
+if args.verbose:
+    print(f'Project {args.add_proj} created succesfully!')
