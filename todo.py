@@ -30,18 +30,13 @@ class Project:
     Deadline : Date
     def add_task(self, task_name : str , task_desc : str,
                  task_ddline : Date) -> None:
-        tasks[task_name] = {"description" : task_desc , "deadline" : task_ddline}
+        self.tasks[task_name] = {"description" : task_desc , "deadline" : task_ddline}
     def set_task_deadline(self, task_name : str , task_ddl : Date):
-        tasks[task_name]["deadline"] = task_ddl
+        self.tasks[task_name]["deadline"] = task_ddl
     def set_deadline(self, year : int , month : int , day : int):
         self.Deadline = Date(year , month, day)
-    # Need to define a destructor for Task
-    #def delete task
-    # Need to define a destructor for Project
-    #delete project
-
-    #task attrs name : description, deadline, status
-
+    def set_task_stat(self , task_name : str , stat : int) -> None:
+        self.tasks[task_name]["status"] = Stat(stat)
 parser = ArgumentParser()
 
 parser.add_argument('add_proj', help='Add a project',
