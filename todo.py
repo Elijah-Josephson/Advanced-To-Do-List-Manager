@@ -70,11 +70,15 @@ def setup_parser():
                                        help = 'the name of the project to delete',
                                        type = str)
     if args.command == 'delete_project':
-        del Projects_dict[args.project_name]
-        Projects_dict.pop(args.project_name)
-        print("Success!")
-    if args.delete_project.verbose:
-        print(f'Project {args.add_project} deleted successfully!')
+        if args.project_name in Projects_dict :
+            del Projects_dict[args.project_name]
+            Projects_dict.pop(args.project_name)
+            print("Success!")
+        else :
+            print(f'Project with name {args.project_name} doesn\'t exist!')
+    #if args.delete_project.verbose:
+    #    print(f'Project {args.add_project} deleted successfully!')
+
 
     parser.add_argument('add_task' , help = 'Add a task to your project'
                         , type)
