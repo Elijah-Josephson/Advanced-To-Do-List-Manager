@@ -3,7 +3,7 @@ from argparse import ArgumentParser, Namespace
 
 MAX_NUMBER_OF_PROJECT = 50
 
-Projects = dict()
+Projects_dict = dict()
 
 class Stat(Enum):
     todo = 0
@@ -22,7 +22,7 @@ class Date:
 class Project:
     def __init__(self, name : str):
         Project.name = name
-        Projects[name] = self
+        Projects_dict[name] = self
     def set_description(self, desc : str) -> None:
         Project.description = desc
     tasks = dict()
@@ -39,13 +39,18 @@ class Project:
         self.tasks[task_name]["status"] = Stat(stat)
 parser = ArgumentParser()
 
-parser.add_argument('add_proj', help='Add a project',
-                    type= str)
+parser.add_argument('add_project', help = 'Add a project',
+                    type = str)
 #adding verbose
 parser.add_argument('-v', '--verbose', help = 'verbose description')
 args : Namespace = parser.parse_args()
 
-if args.add_proj:
-    proj = Project(args.add_proj)
-if args.verbose:
-    print(f'Project {args.add_proj} created successfully!')
+if args.add_project:
+    proj = Project(args.add_project)
+    Projects_dict[args.add_project] = {proj}
+if args.add_proj.verbose:
+    print(f'Project {args.add_project} created successfully!')
+
+#parser.add_argument('delete_project', help = 'Delete a project'
+#                    ,type = str)
+#if args.delete_project:
