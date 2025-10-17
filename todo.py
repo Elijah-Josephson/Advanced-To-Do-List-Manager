@@ -41,32 +41,35 @@ class Project:
 def setup_parser():
     """Configures and returns the main argument parser."""
     parser = ArgumentParser(description="A simple project and task manager.")
-#📁
+    #📁
     subparsers = parser.add_subparsers(dest='command',
-                                   required = True, help = 'Available commands')
+                                        required = True, help = 'Available commands')
     #add_project command
     parser_add_project=subparsers.add_parser('add_project', help = 'Add a project')
-    parser_add_project.add_argument('project', help = 'the name of the project to add'
-                                , type = str)
+    parser_add_project.add_argument('project_name', help = 'the name of the project to add'
+                                    , type = str)
     #verbose argument
-    subparsers.add_argument('-v', '--verbose', help = 'verbose description')
+    parser.add_argument('-v', '--verbose', help = 'verbose description')
 
     args : Namespace = parser.parse_args()
 
-    if args.add_project:
-        proj = Project(args.add_project)
-        Projects_dict[args.add_project] = {proj}
-        print("Success!")
-    if args.add_proj.verbose:
-        print(f'Project {args.add_project} created successfully!')
+    if args.command == 'add_project':
+        if args.project_name not in Projects_dict :
+            proj = Project(args.project_name)
+            Projects_dict[args.project_name] = {proj}
+            print("Success!")
+        else :
+            print(f'Project with name {args.project_name} already exists!')
+#    if args.add_proj.verbose:
+#        print(f'Project {args.add_project} created successfully!')
 
     parser_delete_project=subparsers.add_parser('delete_project', help = 'Delete a project')
     parser_delete_project.add_argument('project_name' ,
                                        help = 'the name of the project to delete',
                                        type = str)
-    if args.delete_project:
-        Projects_dict.pop(args.delete_project)
-        del args.delete_project
+    if args.command == 'delete_project':
+        Projects_dict.pop(args.project_name)
+        #del args.delete_project
         print("Success!")
     if args.delete_project.verbose:
         print(f'Project {args.add_project} deleted successfully!')
