@@ -21,7 +21,7 @@ class Date:
 
 class Project:
     def __init__(self, name : str):
-        Project.name = name
+        self.name = name
         Projects_dict[name] = self
     def set_description(self, desc : str) -> None:
         Project.description = desc
@@ -37,6 +37,8 @@ class Project:
         self.Deadline = Date(year , month, day)
     def set_task_stat(self , task_name : str , stat : int) -> None:
         self.tasks[task_name]["status"] = Stat(stat)
+    def __del__(self):
+        print(f'Object {self.name} is being deleted!')
 #parser = ArgumentParser()
 def setup_parser():
     """Configures and returns the main argument parser."""
@@ -68,8 +70,8 @@ def setup_parser():
                                        help = 'the name of the project to delete',
                                        type = str)
     if args.command == 'delete_project':
+        del Projects_dict[args.project_name]
         Projects_dict.pop(args.project_name)
-        #del args.delete_project
         print("Success!")
     if args.delete_project.verbose:
         print(f'Project {args.add_project} deleted successfully!')
