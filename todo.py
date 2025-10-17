@@ -1,8 +1,6 @@
 from enum import Enum
 from argparse import ArgumentParser, Namespace
 
-from chardet.cli.chardetect import description_of
-
 MAX_NUMBER_OF_PROJECT = 50
 
 Projects_dict = dict()
@@ -12,6 +10,7 @@ class Stat(Enum):
     doing = 1
     done = 2
 
+
 class Date:
     def __init__(self , yy : int , mm : int , dd : int):
         self.year = yy
@@ -20,8 +19,9 @@ class Date:
     year : int
     month : int
     day : int
-    def __repr__(self):
-        print(f'{self.year}/{self.month}/{self.day}')
+    def __repr__(self) -> str:
+        return f'{self.year}/{self.month}/{self.day}'
+
 
 class Project:
     def __init__(self, name : str):
@@ -43,23 +43,18 @@ class Project:
         self.tasks[task_name]["status"] = Stat(stat)
     def __del__(self):
         print(f'Object {self.name} is being deleted!')
-#parser = ArgumentParser()
+
+
 def setup_parser():
     """Configures and returns the main argument parser."""
     parser = ArgumentParser(description="A simple project and task manager.")
-    #📁
     subparsers = parser.add_subparsers(dest='command',
                                         required = True, help = 'Available commands')
     #add_project command
     parser_add_project=subparsers.add_parser('add_project', help = 'Add a project')
     parser_add_project.add_argument('project_name', help = 'the name of the project to add'
                                     , type = str)
-    #verbose argument
-    parser.add_argument('-v', '--verbose', help = 'verbose description')
-
     args : Namespace = parser.parse_args()
-
-
 
     parser_delete_project=subparsers.add_parser('delete_project', help = 'Delete a project')
     parser_delete_project.add_argument('project_name' ,
@@ -73,7 +68,6 @@ def setup_parser():
     parser_add_task.add_argument('task_name'
                                  , help = 'the name of the task to add to project')
 
-    # verbose?
     parse_set_task_deadline = subparsers.add_parser('set_task_deadline'
                                                     , help = 'add deadline to task')
     parse_set_task_deadline.add_argument('project_name' , help = 'project name' , type = str)
@@ -127,6 +121,17 @@ def setup_parser():
     parser_delete_task.add_argument('task_name'
                                     , help = 'task name'
                                     , type = str)
+    parser_set_task_description = subparsers.add_parser('set_task_description'
+                                                        , help = 'set description for task')
+    parser_set_task_description.add_argument('project_name'
+                                             , help = 'project name'
+                                             , type = str)
+    parser_set_task_description.add_argument('task_name'
+                                             , help = 'task name'
+                                             , type = str)
+    parser_set_task_description.add_argument('description'
+                                             , help = 'description'
+                                             , type = str)
     return parser
 
 def main():
@@ -135,24 +140,23 @@ def main():
 
     if args.command == 'set_task_deadline' :
         if args.projcet_name not in Projects_dict :
-            pass
+            print(f'Project with name {args.project_name} does not exist!')
+        elif args.task_name not in Projects_dict[args.projcet_name].tasks :
+            print(f'Task with name {args.task_name} already exists in project {args.project_name}!')
         else :
-            if args.task_name not in Projects_dict[args.projcet_name].tasks :
-                pass
-            else :
-                ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
-                Projects_dict[args.project_name].set_task_deadline(args.task_name , ddl)
-                print('Deadline set successfully!')
+             ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
+             Projects_dict[args.project_name].set_task_deadline(args.task_name , ddl)
+             print('Deadline set successfully!')
 
     if args.command == 'add_task':
         if args.project_name not in Projects_dict :
             print(f'project with name {args.project_name} does not exist!')
+        elif args.project_name not in Projects_dict[args.project_name].tasks :
+            Projects_dict[args.project_name].tasks[args.task_name]["description"] = "none"
+            Projects_dict[args.project_name].tasks[args.task_name]["deadline"] = "00/00/00"
         else :
-            if args.project_name not in Projects_dict[args.project_name].tasks :
-                Projects_dict[args.project_name].tasks[args.task_name]["description"] = "none"
-                Projects_dict[args.project_name].tasks[args.task_name]["deadline"] = "00/00/00"
-            else :
-                print(f'Task with name {args.task_name} already exists in project {args.project_name}!')
+            print(f'Task with name {args.task_name} already exists in project {args.project_name}!')
+
     if args.command == 'add_project':
        if args.project_name not in Projects_dict:
             proj = Project(args.project_name)
@@ -160,8 +164,7 @@ def main():
             print("Success!")
        else:
             print(f'Project with name {args.project_name} already exists!')
-    #    if args.add_proj.verbose:
-    #        print(f'Project {args.add_project} created successfully!')
+
     if args.command == 'delete_project':
         if args.project_name in Projects_dict :
             del Projects_dict[args.project_name]
@@ -169,13 +172,12 @@ def main():
             print("Success!")
         else :
             print(f'Project with name {args.project_name} doesn\'t exist!')
-    #if args.delete_project.verbose:
-    #    print(f'Project {args.add_project} deleted successfully!')
+
     if args.command == 'set_task_status' :
         if args.project_name not in Projects_dict :
-            pass
+            print(f'Project with name {args.project_name} does not exist!')
         elif args.task_name not in Projects_dict[args.project_name].tasks :
-            pass
+            print(f'Task with name {args.task_name} does not exist!')
         else :
             match args.status :
                 case 'todo' :
@@ -184,27 +186,38 @@ def main():
                     Projects_dict[args.project_name].set_task_stat(args.task_name, 1)
                 case 'done':
                     Projects_dict[args.project_name].set_task_stat(args.task_name, 2)
+
     if args.command == 'set_project_deadline' :
         if args.project_name not in Projects_dict :
-            pass
+            print(f'Project with name {args.project_name} does not exist!')
         elif args.task_name not in Projects_dict[args.project_name].task :
-            pass
+            print(f'Task with name {args.task_name} does not exist!')
         else :
             ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
             Projects_dict[args.project_name].set_deadline(ddl)
+
     if args.command == 'set_project_description' :
         if args.project_name not in Projects_dict :
-            pass
+            print(f'Project with name {args.project_name} does not exist!')
         else :
             Projects_dict[args.project_name].set_description(args.description)
 
     if args.command == 'delete_task' :
         if args.project_name not in Projects_dict :
-            pass
+            print(f'Project with name {args.project_name} does not exist!')
         elif args.task_name not in Projects_dict[args.project_name].tasks :
-            pass
+            print(f'Task with name {args.task_name} does not exist!')
         else :
             Projects_dict[args.project_name].tasks.pop(args.task_name)
+
+    if args.command == 'set_task_description' :
+        if args.project_name not in Projects_dict :
+            print(f'Project with name {args.project_name} does not exist!')
+        elif args.task_name not in Projects_dict[args.project_name].tasks :
+            print(f'Task with name {args.task_name} does not exist!')
+        else :
+            Projects_dict[args.project_name].set_task_description(args.task_name , args.description)
+
 
 if __name__ == "__main__":
     main()
