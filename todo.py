@@ -1,6 +1,8 @@
 from enum import Enum
 from argparse import ArgumentParser, Namespace
 
+from chardet.cli.chardetect import description_of
+
 MAX_NUMBER_OF_PROJECT = 50
 
 Projects_dict = dict()
@@ -18,6 +20,8 @@ class Date:
     year : int
     month : int
     day : int
+    def __repr__(self):
+        print(f'{self.year}/{self.month}/{self.day}')
 
 class Project:
     def __init__(self, name : str):
@@ -80,5 +84,39 @@ def setup_parser():
     #    print(f'Project {args.add_project} deleted successfully!')
 
 
-    parser.add_argument('add_task' , help = 'Add a task to your project'
-                        , type)
+    parser_add_task = subparsers.add_parser('add_task',
+                                            help = 'add task X to project Y : add_task Y X')
+    parser_add_task.add_argument('project_name'
+                                 , help = 'the name of the project to add task to')
+    parser_add_task.add_argument('task_name'
+                                 , help = 'the name of the task to add to project')
+
+    if args.command == 'add_task':
+        if args.project_name not in Projects_dict :
+            print(f'project with name {args.project_name} does not exist!')
+        else :
+            if args.project_name not in Projects_dict[args.project_name].tasks :
+                Projects_dict[args.project_name].tasks[args.task_name]["description"] = "none"
+                Projects_dict[args.project_name].tasks[args.task_name]["deadline"] = "00/00/00"
+            else :
+                print(f'Task with name {args.task_name} already exists in project {args.project_name}!')
+    # verbose?
+
+    parse_set_task_deadline = subparsers.add_parser('set_task_deadline'
+                                                    , help = 'add deadline to task')
+    parse_set_task_deadline.add_argument('project_name' , help = 'project name' , type = str)
+    parse_set_task_deadline.add_argument('task_name', help='task name' , type = str)
+    parse_set_task_deadline.add_argument('deadline_year', help='deadline year' , type = int)
+    parse_set_task_deadline.add_argument('deadline_month', help='deadline month' , type = int)
+    parse_set_task_deadline.add_argument('deadline_day', help='deadline day' , type = int)
+
+    if args.command == 'set_task_deadline' :
+        if args.projcet_name not in Projects_dict :
+            pass
+        else :
+            if args.task_name not in Projects_dict[args.projcet_name].tasks :
+                pass
+            else :
+                ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
+                Projects_dict[args.project_name].set_task_deadline(args.task_name , ddl)
+                print('Deadline set successfully!')
