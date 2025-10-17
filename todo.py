@@ -82,13 +82,53 @@ def setup_parser():
     parse_set_task_deadline.add_argument('deadline_month', help='deadline month' , type = int)
     parse_set_task_deadline.add_argument('deadline_day', help='deadline day' , type = int)
 
+    parser_set_project_description = subparsers.add_parser('set_project_description'
+                                   ,help = 'set description for project')
+    parser_set_project_description.add_argument('project_name'
+                                                , help = 'project name'
+                                                , type = str)
+    parser_set_project_description.add_argument('description'
+                                                , help = 'description for your project'
+                                                , type = str)
 
-#   parser_set_task_stat = subparsers.add_parser()
+    parser_set_task_stat = subparsers.add_parser('set_task_stat'
+                                                 , help = 'set status for a task')
+    parser_set_task_stat.add_argument('project_name' , help = 'project name'
+                                      , type = str)
+    parser_set_task_stat.add_argument('task_name', help='task name'
+                                      , type = str)
+    parser_set_task_stat.add_argument('status'
+                                      , help='status : todo | doing | done'
+                                      , type = str)
 
-#   parser_set_project_deadline = subparsers.add_parser()
-#   parser_set_project_stat = subparsers.add_parser()
-#   parser_delete_task = subparsers.add_parser()
+    parser_set_project_deadline = subparsers.add_parser('set_project_deadline'
+                                                        ,help = 'set a deadline for a project')
+    parser_set_project_deadline.add_argument('project_name'
+                                             , help = 'project name'
+                                             , type = str)
+    parser_set_project_deadline.add_argument('task_name'
+                                             , help = 'task name'
+                                             , type = str)
+    parser_set_project_deadline.add_argument('deadline_year'
+                                             , help = 'deadline year'
+                                             , type = int)
+    parser_set_project_deadline.add_argument('deadline_month'
+                                             , help = 'deadline month'
+                                             , type = int)
+    parser_set_project_deadline.add_argument('deadline_day'
+                                             , help = 'deadline day'
+                                             , type = int)
+
+    parser_delete_task = subparsers.add_parser('delete_task'
+                                               , help = 'delete a task')
+    parser_delete_task.add_argument('project_name'
+                                    , help = 'project name'
+                                    , type = str)
+    parser_delete_task.add_argument('task_name'
+                                    , help = 'task name'
+                                    , type = str)
     return parser
+
 def main():
     parser = setup_parser()
     args = parser.parse_args()
@@ -131,6 +171,40 @@ def main():
             print(f'Project with name {args.project_name} doesn\'t exist!')
     #if args.delete_project.verbose:
     #    print(f'Project {args.add_project} deleted successfully!')
+    if args.command == 'set_task_status' :
+        if args.project_name not in Projects_dict :
+            pass
+        elif args.task_name not in Projects_dict[args.project_name].tasks :
+            pass
+        else :
+            match args.status :
+                case 'todo' :
+                    Projects_dict[args.project_name].set_task_stat(args.task_name , 0)
+                case 'doing':
+                    Projects_dict[args.project_name].set_task_stat(args.task_name, 1)
+                case 'done':
+                    Projects_dict[args.project_name].set_task_stat(args.task_name, 2)
+    if args.command == 'set_project_deadline' :
+        if args.project_name not in Projects_dict :
+            pass
+        elif args.task_name not in Projects_dict[args.project_name].task :
+            pass
+        else :
+            ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
+            Projects_dict[args.project_name].set_deadline(ddl)
+    if args.command == 'set_project_description' :
+        if args.project_name not in Projects_dict :
+            pass
+        else :
+            Projects_dict[args.project_name].set_description(args.description)
+
+    if args.command == 'delete_task' :
+        if args.project_name not in Projects_dict :
+            pass
+        elif args.task_name not in Projects_dict[args.project_name].tasks :
+            pass
+        else :
+            Projects_dict[args.project_name].tasks.pop(args.task_name)
 
 if __name__ == "__main__":
     main()
