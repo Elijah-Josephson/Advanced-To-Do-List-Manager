@@ -1,4 +1,3 @@
-#defining classes project and task
 from enum import Enum
 from argparse import ArgumentParser, Namespace
 
@@ -23,18 +22,23 @@ class Project:
         Project.name = name
     def set_description(self, desc : str) -> None:
         Project.description = desc
+    tasks = dict()
+    description : str
     Deadline : Date
-    def add_task(self, task_name : str):
-        new_task = Task(task_name)
-        tasks_list.append(new_task)
+    def add_task(self, task_name : str , task_desc : str,
+                 task_ddline : Date) -> None:
+        tasks[task_name] = {"description" : task_desc , "deadline" : task_ddline}
+    def set_task_deadline(self, task_name : str , task_ddl : Date):
+        tasks[task_name]["deadline"] = task_ddl
     def set_deadline(self, year : int , month : int , day : int):
         self.Deadline = Date(year , month, day)
     # Need to define a destructor for Task
     #def delete task
     # Need to define a destructor for Project
     #delete project
-    tasks = {}
+
     #task attrs name : description, deadline, status
+
 parser = ArgumentParser()
 
 parser.add_argument('add_proj', help='Add a project',
