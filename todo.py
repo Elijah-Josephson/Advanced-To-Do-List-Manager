@@ -48,9 +48,16 @@ args : Namespace = parser.parse_args()
 if args.add_project:
     proj = Project(args.add_project)
     Projects_dict[args.add_project] = {proj}
+    print("Success!")
 if args.add_proj.verbose:
     print(f'Project {args.add_project} created successfully!')
 
-#parser.add_argument('delete_project', help = 'Delete a project'
-#                    ,type = str)
-#if args.delete_project:
+parser.add_argument('delete_project', help = 'Delete a project'
+                    ,type = str)
+if args.delete_project:
+    Projects_dict.pop(args.delete_project)
+    del args.delete_project
+    print("Success!")
+if args.delete_project.verbose:
+    print(f'Project {args.add_project} deleted successfully!')
+
