@@ -3,6 +3,8 @@ from argparse import ArgumentParser, Namespace
 
 MAX_NUMBER_OF_PROJECT = 50
 
+Projects = dict()
+
 class Stat(Enum):
     todo = 0
     doing = 1
@@ -20,6 +22,7 @@ class Date:
 class Project:
     def __init__(self, name : str):
         Project.name = name
+        Projects[name] = self
     def set_description(self, desc : str) -> None:
         Project.description = desc
     tasks = dict()
