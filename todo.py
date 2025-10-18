@@ -25,12 +25,12 @@ class Date:
 
 class Project:
     def __init__(self, name : str):
-        self.name = name
+        self.name : str = name
+        self.description : str = ""
         Projects_dict[name] = self
     def set_description(self, desc : str) -> None:
         Project.description = desc
     tasks = dict()
-    description : str
     Deadline : Date
     def add_task(self, task_name : str , task_desc : str,
                  task_ddline : Date) -> None:
@@ -171,7 +171,7 @@ def main():
             Projects_dict.pop(args.project_name)
             print("Success!")
         else :
-            print(f'Project with name {args.project_name} doesn\'t exist!')
+            print(f'Project with name {args.project_name} does not exist!')
 
     if args.command == 'set_task_status' :
         if args.project_name not in Projects_dict :
