@@ -84,6 +84,9 @@ class Project:
             raise KeyError(f"Task '{task_name}' does not exist in project '{self.name}'.")
         self.tasks.pop(task_name)
 
+    def __repr__(self) -> str:
+        return f"Project(name={self.name!r}, tasks={len(self.tasks)})"
+
     def __del__(self):
         print(f'Object {self.name} is being deleted!')
 
