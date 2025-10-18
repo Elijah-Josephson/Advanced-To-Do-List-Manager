@@ -35,9 +35,15 @@ class Project:
     def set_description(self, desc : str) -> None:
         Project.description = desc
 
-    def add_task(self, task_name : str , task_desc : str,
-                 task_ddline : Date) -> None:
-        self.tasks[task_name] = {"description" : task_desc , "deadline" : task_ddline}
+    def add_task(self, task_name: str, task_desc: str = "none", task_ddline: Optional[Date] = None) -> None:
+        if task_name in self.tasks:
+            raise KeyError(f"Task '{task_name}' already exists in project '{self.name}'.")
+        self.tasks[task_name] = {
+            "description": task_desc,
+            "deadline": task_ddline,
+            "status": Stat.todo,
+        }
+
     def set_task_deadline(self, task_name : str , task_ddl : Date):
         self.tasks[task_name]["deadline"] = task_ddl
     def set_deadline(self, year : int , month : int , day : int):
