@@ -89,93 +89,53 @@ class Project:
         print(f'Object {self.name!r} is being deleted!')
 
 
-def setup_parser():
+def setup_parser() -> ArgumentParser:
     """Configures and returns the main argument parser."""
     parser = ArgumentParser(description="A simple project and task manager.")
-    subparsers = parser.add_subparsers(dest='command',
-                                        required = True, help = 'Available commands')
-    #add_project command
-    parser_add_project=subparsers.add_parser('add_project', help = 'Add a project')
-    parser_add_project.add_argument('project_name', help = 'the name of the project to add'
-                                    , type = str)
-    args : Namespace = parser.parse_args()
+    subparsers = parser.add_subparsers(dest="command", required=True, help="Available commands")
 
-    parser_delete_project=subparsers.add_parser('delete_project', help = 'Delete a project')
-    parser_delete_project.add_argument('project_name' ,
-                                       help = 'the name of the project to delete',
-                                       type = str)
+    # add_project command
+    parser_add_project = subparsers.add_parser("add_project", help="Add a project")
+    parser_add_project.add_argument("project_name", help="the name of the project to add", type=str)
 
-    parser_add_task = subparsers.add_parser('add_task',
-                                            help = 'add task X to project Y : add_task Y X')
-    parser_add_task.add_argument('project_name'
-                                 , help = 'the name of the project to add task to')
-    parser_add_task.add_argument('task_name'
-                                 , help = 'the name of the task to add to project')
+    parser_delete_project = subparsers.add_parser("delete_project", help="Delete a project")
+    parser_delete_project.add_argument("project_name", help="the name of the project to delete", type=str)
 
-    parse_set_task_deadline = subparsers.add_parser('set_task_deadline'
-                                                    , help = 'add deadline to task')
-    parse_set_task_deadline.add_argument('project_name' , help = 'project name' , type = str)
-    parse_set_task_deadline.add_argument('task_name', help='task name' , type = str)
-    parse_set_task_deadline.add_argument('deadline_year', help='deadline year' , type = int)
-    parse_set_task_deadline.add_argument('deadline_month', help='deadline month' , type = int)
-    parse_set_task_deadline.add_argument('deadline_day', help='deadline day' , type = int)
+    parser_add_task = subparsers.add_parser("add_task", help="Add task X to project Y: add_task Y X")
+    parser_add_task.add_argument("project_name", help="the name of the project to add task to", type=str)
+    parser_add_task.add_argument("task_name", help="the name of the task to add to project", type=str)
 
-    parser_set_project_description = subparsers.add_parser('set_project_description'
-                                   ,help = 'set description for project')
-    parser_set_project_description.add_argument('project_name'
-                                                , help = 'project name'
-                                                , type = str)
-    parser_set_project_description.add_argument('description'
-                                                , help = 'description for your project'
-                                                , type = str)
+    parser_set_task_deadline = subparsers.add_parser("set_task_deadline", help="Add deadline to task")
+    parser_set_task_deadline.add_argument("project_name", help="project name", type=str)
+    parser_set_task_deadline.add_argument("task_name", help="task name", type=str)
+    parser_set_task_deadline.add_argument("deadline_year", help="deadline year", type=int)
+    parser_set_task_deadline.add_argument("deadline_month", help="deadline month", type=int)
+    parser_set_task_deadline.add_argument("deadline_day", help="deadline day", type=int)
 
-    parser_set_task_stat = subparsers.add_parser('set_task_stat'
-                                                 , help = 'set status for a task')
-    parser_set_task_stat.add_argument('project_name' , help = 'project name'
-                                      , type = str)
-    parser_set_task_stat.add_argument('task_name', help='task name'
-                                      , type = str)
-    parser_set_task_stat.add_argument('status'
-                                      , help='status : todo | doing | done'
-                                      , type = str)
+    parser_set_project_description = subparsers.add_parser("set_project_description", help="Set description for project")
+    parser_set_project_description.add_argument("project_name", help="project name", type=str)
+    parser_set_project_description.add_argument("description", help="description for your project", type=str)
 
-    parser_set_project_deadline = subparsers.add_parser('set_project_deadline'
-                                                        ,help = 'set a deadline for a project')
-    parser_set_project_deadline.add_argument('project_name'
-                                             , help = 'project name'
-                                             , type = str)
-    parser_set_project_deadline.add_argument('task_name'
-                                             , help = 'task name'
-                                             , type = str)
-    parser_set_project_deadline.add_argument('deadline_year'
-                                             , help = 'deadline year'
-                                             , type = int)
-    parser_set_project_deadline.add_argument('deadline_month'
-                                             , help = 'deadline month'
-                                             , type = int)
-    parser_set_project_deadline.add_argument('deadline_day'
-                                             , help = 'deadline day'
-                                             , type = int)
+    parser_set_task_status = subparsers.add_parser("set_task_status", help="Set status for a task")
+    parser_set_task_status.add_argument("project_name", help="project name", type=str)
+    parser_set_task_status.add_argument("task_name", help="task name", type=str)
+    parser_set_task_status.add_argument("status", help="status : todo | doing | done", type=str)
 
-    parser_delete_task = subparsers.add_parser('delete_task'
-                                               , help = 'delete a task')
-    parser_delete_task.add_argument('project_name'
-                                    , help = 'project name'
-                                    , type = str)
-    parser_delete_task.add_argument('task_name'
-                                    , help = 'task name'
-                                    , type = str)
-    parser_set_task_description = subparsers.add_parser('set_task_description'
-                                                        , help = 'set description for task')
-    parser_set_task_description.add_argument('project_name'
-                                             , help = 'project name'
-                                             , type = str)
-    parser_set_task_description.add_argument('task_name'
-                                             , help = 'task name'
-                                             , type = str)
-    parser_set_task_description.add_argument('description'
-                                             , help = 'description'
-                                             , type = str)
+    parser_set_project_deadline = subparsers.add_parser("set_project_deadline", help="Set a deadline for a project")
+    parser_set_project_deadline.add_argument("project_name", help="project name", type=str)
+    parser_set_project_deadline.add_argument("deadline_year", help="deadline year", type=int)
+    parser_set_project_deadline.add_argument("deadline_month", help="deadline month", type=int)
+    parser_set_project_deadline.add_argument("deadline_day", help="deadline day", type=int)
+
+    parser_delete_task = subparsers.add_parser("delete_task", help="Delete a task")
+    parser_delete_task.add_argument("project_name", help="project name", type=str)
+    parser_delete_task.add_argument("task_name", help="task name", type=str)
+
+    parser_set_task_description = subparsers.add_parser("set_task_description", help="Set description for task")
+    parser_set_task_description.add_argument("project_name", help="project name", type=str)
+    parser_set_task_description.add_argument("task_name", help="task name", type=str)
+    parser_set_task_description.add_argument("description", help="description", type=str)
+
     return parser
 
 def main():
