@@ -14,14 +14,12 @@ class Stat(Enum):
 
 class Date:
     def __init__(self , yy : int , mm : int , dd : int):
-        self.year = yy
-        self.month = mm
-        self.day = dd
-    year : int
-    month : int
-    day : int
+        self.year : int = yy
+        self.month : int = mm
+        self.day : int = dd
+
     def __repr__(self) -> str:
-        return f'{self.year}/{self.month}/{self.day}'
+        return f"{self.year:04d}/{self.month:02d}/{self.day:02d}"
 
 
 class Project:
@@ -88,7 +86,7 @@ class Project:
         return f"Project(name={self.name!r}, tasks={len(self.tasks)})"
 
     def __del__(self):
-        print(f'Object {self.name} is being deleted!')
+        print(f'Object {self.name!r} is being deleted!')
 
 
 def setup_parser():
