@@ -1,5 +1,6 @@
 from enum import Enum
 from argparse import ArgumentParser, Namespace
+from typing import Dict, Optional
 
 MAX_NUMBER_OF_PROJECT = 50
 
@@ -29,9 +30,11 @@ class Project:
         self.description : str = ""
         Projects_dict[name] = self
         self.deadline: Optional[Date] = None
+        self.tasks: Dict[str, Dict[str, object]] = {}
+
     def set_description(self, desc : str) -> None:
         Project.description = desc
-    tasks = dict()
+
     def add_task(self, task_name : str , task_desc : str,
                  task_ddline : Date) -> None:
         self.tasks[task_name] = {"description" : task_desc , "deadline" : task_ddline}
