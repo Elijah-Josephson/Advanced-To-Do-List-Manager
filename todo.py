@@ -44,8 +44,11 @@ class Project:
             "status": Stat.todo,
         }
 
-    def set_task_deadline(self, task_name : str , task_ddl : Date):
+    def set_task_deadline(self, task_name: str, task_ddl: Date) -> None:
+        if task_name not in self.tasks:
+            raise KeyError(f"Task '{task_name}' does not exist in project '{self.name}'.")
         self.tasks[task_name]["deadline"] = task_ddl
+
     def set_deadline(self, year : int , month : int , day : int):
         self.Deadline = Date(year , month, day)
     def set_task_stat(self , task_name : str , stat : int) -> None:
