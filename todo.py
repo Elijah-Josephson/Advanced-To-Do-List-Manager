@@ -253,6 +253,46 @@ def process_args(args: Namespace) -> None:
     except Exception as exc:
         print(f"Error: {exc}")
 
+def repl(parser: ArgumentParser) -> None:
+    """Interactive read-eval-print-loop for commands."""
+    prompt = "todolist> "
+    print("Entering interactive mode. Type 'help' for commands, 'quit' or 'exit' to leave.")
+    while True:
+        try:
+            line = input(prompt)
+        except (KeyboardInterrupt, EOFError):
+            print("\nExiting.")
+            break
+
+        if not line.strip():
+            continue
+
+        if line.strip().lower() in ("quit", "exit", "q"):
+            print("Goodbye.")
+            break
+
+        tokens = shlex.split(line)
+        if not tokens:
+            continue
+
+        if tokens[0] == "help":
+            if len(tokens) == 1:
+                parser.print_help()
+            else:
+                subcmd = tokens[1]
+                try:
+                    parser.parse_args([subcmd, "-h"])
+                except SystemExit:
+                    pass
+            continue
+
+        try:
+            args = parser.parse_args(tokens)
+        except SystemExit:
+            continue
+
+        process_args(args)
+
 def main():
     parser = setup_parser()
     args: Namespace = parser.parse_args()
