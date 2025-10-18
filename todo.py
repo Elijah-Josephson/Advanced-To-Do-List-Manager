@@ -26,7 +26,7 @@ class Project:
     def __init__(self, name : str):
         self.name : str = name
         self.description : str = ""
-        Projects_dict[name] = self
+        PROJECTS[name] = self
         self.deadline: Optional[Date] = None
         self.tasks: Dict[str, Dict[str, object]] = {}
 
@@ -138,7 +138,7 @@ def setup_parser() -> ArgumentParser:
 
     return parser
 
-def main() -> None:
+def main():
     parser = setup_parser()
     args: Namespace = parser.parse_args()
 
@@ -176,7 +176,6 @@ def main() -> None:
 
         elif args.command == "delete_project":
             if args.project_name in PROJECTS:
-                # cascade delete: removing the project removes its tasks (in-memory)
                 del PROJECTS[args.project_name]
                 print("Project deleted successfully!")
             else:
@@ -233,8 +232,6 @@ def main() -> None:
 
     except Exception as exc:
         print(f"Error: {exc}")
-
-
 
 if __name__ == "__main__":
     main()
