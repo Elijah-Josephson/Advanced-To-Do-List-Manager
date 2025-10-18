@@ -4,7 +4,7 @@ from typing import Dict, Optional
 
 MAX_NUMBER_OF_PROJECT = 50
 
-Projects_dict = dict()
+PROJECTS: Dict[str, "Project"] = {}
 
 class Stat(Enum):
     todo = 0
@@ -138,89 +138,102 @@ def setup_parser() -> ArgumentParser:
 
     return parser
 
-def main():
+def main() -> None:
     parser = setup_parser()
-    args = parser.parse_args()
+    args: Namespace = parser.parse_args()
 
-    if args.command == 'set_task_deadline' :
-        if args.projcet_name not in Projects_dict :
-            print(f'Project with name {args.project_name} does not exist!')
-        elif args.task_name not in Projects_dict[args.projcet_name].tasks :
-            print(f'Task with name {args.task_name} already exists in project {args.project_name}!')
-        else :
-             ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
-             Projects_dict[args.project_name].set_task_deadline(args.task_name , ddl)
-             print('Deadline set successfully!')
+    try:
+        if args.command == "set_task_deadline":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist in project {args.project_name}!")
+            else:
+                ddl = Date(args.deadline_year, args.deadline_month, args.deadline_day)
+                PROJECTS[args.project_name].set_task_deadline(args.task_name, ddl)
+                print("Deadline set successfully!")
 
-    if args.command == 'add_task':
-        if args.project_name not in Projects_dict :
-            print(f'project with name {args.project_name} does not exist!')
-        elif args.project_name not in Projects_dict[args.project_name].tasks :
-            Projects_dict[args.project_name].tasks[args.task_name]["description"] = "none"
-            Projects_dict[args.project_name].tasks[args.task_name]["deadline"] = "00/00/00"
-        else :
-            print(f'Task with name {args.task_name} already exists in project {args.project_name}!')
+        elif args.command == "add_task":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                project = PROJECTS[args.project_name]
+                if args.task_name in project.tasks:
+                    print(f"Task with name {args.task_name} already exists in project {args.project_name}!")
+                else:
+                    project.add_task(args.task_name)
+                    print("Task added successfully!")
 
-    if args.command == 'add_project':
-       if args.project_name not in Projects_dict:
-            proj = Project(args.project_name)
-            Projects_dict[args.project_name] = {proj}
-            print("Success!")
-       else:
-            print(f'Project with name {args.project_name} already exists!')
+        elif args.command == "add_project":
+            if args.project_name in PROJECTS:
+                print(f"Project with name {args.project_name} already exists!")
+            elif len(PROJECTS) >= MAX_NUMBER_OF_PROJECT:
+                print(f"Cannot create project: reached MAX_NUMBER_OF_PROJECT ({MAX_NUMBER_OF_PROJECT}).")
+            else:
+                proj = Project(args.project_name)
+                PROJECTS[args.project_name] = proj
+                print("Project created successfully!")
 
-    if args.command == 'delete_project':
-        if args.project_name in Projects_dict :
-            del Projects_dict[args.project_name]
-            Projects_dict.pop(args.project_name)
-            print("Success!")
-        else :
-            print(f'Project with name {args.project_name} does not exist!')
+        elif args.command == "delete_project":
+            if args.project_name in PROJECTS:
+                # cascade delete: removing the project removes its tasks (in-memory)
+                del PROJECTS[args.project_name]
+                print("Project deleted successfully!")
+            else:
+                print(f"Project with name {args.project_name} does not exist!")
 
-    if args.command == 'set_task_status' :
-        if args.project_name not in Projects_dict :
-            print(f'Project with name {args.project_name} does not exist!')
-        elif args.task_name not in Projects_dict[args.project_name].tasks :
-            print(f'Task with name {args.task_name} does not exist!')
-        else :
-            match args.status :
-                case 'todo' :
-                    Projects_dict[args.project_name].set_task_stat(args.task_name , 0)
-                case 'doing':
-                    Projects_dict[args.project_name].set_task_stat(args.task_name, 1)
-                case 'done':
-                    Projects_dict[args.project_name].set_task_stat(args.task_name, 2)
+        elif args.command == "set_task_status":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist!")
+            else:
+                status_str = args.status
+                try:
+                    PROJECTS[args.project_name].set_task_stat(args.task_name, status_str)
+                    print("Task status updated successfully!")
+                except Exception as exc:
+                    print(f"Failed to set status: {exc}")
 
-    if args.command == 'set_project_deadline' :
-        if args.project_name not in Projects_dict :
-            print(f'Project with name {args.project_name} does not exist!')
-        elif args.task_name not in Projects_dict[args.project_name].task :
-            print(f'Task with name {args.task_name} does not exist!')
-        else :
-            ddl = Date(args.deadline_year , args.deadline_month , args.deadline_day)
-            Projects_dict[args.project_name].set_deadline(ddl)
+        elif args.command == "set_project_deadline":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                ddl = Date(args.deadline_year, args.deadline_month, args.deadline_day)
+                PROJECTS[args.project_name].set_deadline(ddl)
+                print("Project deadline set successfully!")
 
-    if args.command == 'set_project_description' :
-        if args.project_name not in Projects_dict :
-            print(f'Project with name {args.project_name} does not exist!')
-        else :
-            Projects_dict[args.project_name].set_description(args.description)
+        elif args.command == "set_project_description":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                PROJECTS[args.project_name].set_description(args.description)
+                print("Project description updated successfully!")
 
-    if args.command == 'delete_task' :
-        if args.project_name not in Projects_dict :
-            print(f'Project with name {args.project_name} does not exist!')
-        elif args.task_name not in Projects_dict[args.project_name].tasks :
-            print(f'Task with name {args.task_name} does not exist!')
-        else :
-            Projects_dict[args.project_name].tasks.pop(args.task_name)
+        elif args.command == "delete_task":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist!")
+            else:
+                PROJECTS[args.project_name].delete_task(args.task_name)
+                print("Task deleted successfully!")
 
-    if args.command == 'set_task_description' :
-        if args.project_name not in Projects_dict :
-            print(f'Project with name {args.project_name} does not exist!')
-        elif args.task_name not in Projects_dict[args.project_name].tasks :
-            print(f'Task with name {args.task_name} does not exist!')
-        else :
-            Projects_dict[args.project_name].set_task_description(args.task_name , args.description)
+        elif args.command == "set_task_description":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist!")
+            else:
+                PROJECTS[args.project_name].set_task_description(args.task_name, args.description)
+                print("Task description updated successfully!")
+
+        else:
+            print("Unknown command. Use -h for help.")
+
+    except Exception as exc:
+        print(f"Error: {exc}")
+
 
 
 if __name__ == "__main__":
