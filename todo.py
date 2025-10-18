@@ -57,8 +57,23 @@ class Project:
                 raise ValueError("Provide year, month and day to set project deadline.")
             self.deadline = Date(int(year_or_date), int(month), int(day))
 
-    def set_task_stat(self , task_name : str , stat : int) -> None:
-        self.tasks[task_name]["status"] = Stat(stat)
+    def set_task_stat(self, task_name: str, stat: object) -> None:
+        if task_name not in self.tasks:
+            raise KeyError(f"Task '{task_name}' does not exist in project '{self.name}'.")
+        if isinstance(stat, Stat):
+            self.tasks[task_name]["status"] = stat
+            return
+        # accept string names or integer codes
+        if isinstance(stat, str):
+            try:
+                self.tasks[task_name]["status"] = Stat[stat]
+            except KeyError:
+                raise ValueError("Invalid status string. Use 'todo'|'doing'|'done'.")
+        elif isinstance(stat, int):
+            self.tasks[task_name]["status"] = Stat(stat)
+        else:
+            raise ValueError("Invalid status type.")
+
     def __del__(self):
         print(f'Object {self.name} is being deleted!')
 
