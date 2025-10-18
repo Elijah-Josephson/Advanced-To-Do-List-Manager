@@ -49,8 +49,14 @@ class Project:
             raise KeyError(f"Task '{task_name}' does not exist in project '{self.name}'.")
         self.tasks[task_name]["deadline"] = task_ddl
 
-    def set_deadline(self, year : int , month : int , day : int):
-        self.Deadline = Date(year , month, day)
+    def set_deadline(self, year_or_date, month: int = None, day: int = None) -> None:
+        if isinstance(year_or_date, Date):
+            self.deadline = year_or_date
+        else:
+            if month is None or day is None:
+                raise ValueError("Provide year, month and day to set project deadline.")
+            self.deadline = Date(int(year_or_date), int(month), int(day))
+
     def set_task_stat(self , task_name : str , stat : int) -> None:
         self.tasks[task_name]["status"] = Stat(stat)
     def __del__(self):
