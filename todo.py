@@ -28,10 +28,10 @@ class Project:
         self.name : str = name
         self.description : str = ""
         Projects_dict[name] = self
+        self.deadline: Optional[Date] = None
     def set_description(self, desc : str) -> None:
         Project.description = desc
     tasks = dict()
-    Deadline : Date
     def add_task(self, task_name : str , task_desc : str,
                  task_ddline : Date) -> None:
         self.tasks[task_name] = {"description" : task_desc , "deadline" : task_ddline}
