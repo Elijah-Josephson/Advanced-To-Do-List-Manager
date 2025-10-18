@@ -1,3 +1,6 @@
+from __future__ import annotations
+import shlex
+import sys
 from enum import Enum
 from argparse import ArgumentParser, Namespace
 from typing import Dict, Optional
@@ -137,6 +140,118 @@ def setup_parser() -> ArgumentParser:
     parser_set_task_description.add_argument("description", help="description", type=str)
 
     return parser
+
+def process_args(args: Namespace) -> None:
+    """Execute a single parsed command (args)."""
+    try:
+        if args.command == "set_task_deadline":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist in project {args.project_name}!")
+            else:
+                ddl = Date(args.deadline_year, args.deadline_month, args.deadline_day)
+                PROJECTS[args.project_name].set_task_deadline(args.task_name, ddl)
+                print("Deadline set successfully!")
+
+        elif args.command == "add_task":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                project = PROJECTS[args.project_name]
+                if args.task_name in project.tasks:
+                    print(f"Task with name {args.task_name} already exists in project {args.project_name}!")
+                else:
+                    project.add_task(args.task_name)
+                    print("Task added successfully!")
+
+        elif args.command == "add_project":
+            if args.project_name in PROJECTS:
+                print(f"Project with name {args.project_name} already exists!")
+            elif len(PROJECTS) >= MAX_NUMBER_OF_PROJECT:
+                print(f"Cannot create project: reached MAX_NUMBER_OF_PROJECT ({MAX_NUMBER_OF_PROJECT}).")
+            else:
+                proj = Project(args.project_name)
+                PROJECTS[args.project_name] = proj
+                print("Project created successfully!")
+
+        elif args.command == "delete_project":
+            if args.project_name in PROJECTS:
+                del PROJECTS[args.project_name]
+                print("Project deleted successfully!")
+            else:
+                print(f"Project with name {args.project_name} does not exist!")
+
+        elif args.command == "set_task_status":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist!")
+            else:
+                status_str = args.status
+                try:
+                    PROJECTS[args.project_name].set_task_stat(args.task_name, status_str)
+                    print("Task status updated successfully!")
+                except Exception as exc:
+                    print(f"Failed to set status: {exc}")
+
+        elif args.command == "set_project_deadline":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                ddl = Date(args.deadline_year, args.deadline_month, args.deadline_day)
+                PROJECTS[args.project_name].set_deadline(ddl)
+                print("Project deadline set successfully!")
+
+        elif args.command == "set_project_description":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                PROJECTS[args.project_name].set_description(args.description)
+                print("Project description updated successfully!")
+
+        elif args.command == "delete_task":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist!")
+            else:
+                PROJECTS[args.project_name].delete_task(args.task_name)
+                print("Task deleted successfully!")
+
+        elif args.command == "set_task_description":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            elif args.task_name not in PROJECTS[args.project_name].tasks:
+                print(f"Task with name {args.task_name} does not exist!")
+            else:
+                PROJECTS[args.project_name].set_task_description(args.task_name, args.description)
+                print("Task description updated successfully!")
+
+        elif args.command == "list_projects":
+            if not PROJECTS:
+                print("No projects available.")
+            else:
+                for name, proj in PROJECTS.items():
+                    print(f"- {name}: {len(proj.tasks)} tasks")
+
+        elif args.command == "show_project":
+            if args.project_name not in PROJECTS:
+                print(f"Project with name {args.project_name} does not exist!")
+            else:
+                p = PROJECTS[args.project_name]
+                print(f"Project: {p.name}")
+                print(f"  Description: {p.description!r}")
+                print(f"  Deadline: {p.deadline!r}")
+                print(f"  Tasks ({len(p.tasks)}):")
+                for tname, meta in p.tasks.items():
+                    print(f"   - {tname}: desc={meta['description']!r}, deadline={meta['deadline']!r}, status={meta['status'].name}")
+
+        else:
+            print("Unknown command. Use 'help'.")
+
+    except Exception as exc:
+        print(f"Error: {exc}")
 
 def main():
     parser = setup_parser()
