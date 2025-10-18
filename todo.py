@@ -79,6 +79,11 @@ class Project:
             raise KeyError(f"Task '{task_name}' does not exist in project '{self.name}'.")
         self.tasks[task_name]["description"] = description
 
+    def delete_task(self, task_name: str) -> None:
+        if task_name not in self.tasks:
+            raise KeyError(f"Task '{task_name}' does not exist in project '{self.name}'.")
+        self.tasks.pop(task_name)
+
     def __del__(self):
         print(f'Object {self.name} is being deleted!')
 
