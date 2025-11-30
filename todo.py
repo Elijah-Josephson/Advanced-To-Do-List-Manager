@@ -14,7 +14,7 @@ class Stat(Enum):
     doing = 1
     done = 2
 
-#gello
+
 class Date:
     def __init__(self , yy : int , mm : int , dd : int):
         self.year : int = yy
