@@ -1,5 +1,5 @@
 from sqlalchemy import *
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Column, Integer, String
 from typing import Literal, TypedDict
 from datetime import datetime, timedelta
 
