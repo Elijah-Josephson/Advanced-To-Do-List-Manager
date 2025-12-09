@@ -1,11 +1,5 @@
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
 
-load_dotenv()
-
-DATABASE_URL = os.getenv("DATABASE_URL")  # or build from DB_USER etc.
-
-engine = create_engine(DATABASE_URL, future=True)
-SessionLocal = sessionmaker(bind=engine, expire_on_commit=False, future=True)
+engine = create_engine('postgresql://postgres:secret@localhost/alembic_db')
+Session = sessionmaker(bind = engine)

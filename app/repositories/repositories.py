@@ -7,9 +7,8 @@ from typing import List, TypeVar, Generic, Literal
 
 from db.session import Session
 
+
 T = TypeVar("T")
-
-
 class Repository(ABC, Generic[T]):
     @abstractmethod
     def get(self, id: int) -> T:
@@ -18,19 +17,19 @@ class Repository(ABC, Generic[T]):
     @abstractmethod
     def get_all(self) -> list[T]:
         raise NotImplementedError
-
+    
     @abstractmethod
     def add(self, **kwargs: object) -> None:
         raise NotImplementedError
-
+    
     @abstractmethod
     def update(self, id: int, **kwargs: object) -> None:
         raise NotImplementedError
-
+    
     @abstractmethod
     def delete(self, id: int) -> None:
         raise NotImplementedError
-
+    
 
 class ProjectRepository(Repository[Project]):
     def get(self, id: int) -> Project | None:
@@ -70,7 +69,7 @@ class ProjectRepository(Repository[Project]):
 
 
 class TaskRepository(Repository[Task]):
-    def __init__(self) -> None:
+    def __init__(self) -> None :
         pass
 
     def get(self, id: int) -> Task | None:
@@ -84,7 +83,7 @@ class TaskRepository(Repository[Task]):
     def get_all_by_project(self, project_id: int) -> List[Task]:
         with Session() as session:
             return session.query(Task).filter(Task.project_id == project_id).all()
-
+        
     def add(self, inputs: TaskDict) -> Task:
         with Session() as session:
             task = Task(inputs)
@@ -92,7 +91,7 @@ class TaskRepository(Repository[Task]):
             session.commit()
             session.refresh(task)
             return task
-
+        
     def update(self, id: int, inputs: TaskDict) -> Task:
         with Session() as session:
             task = session.query(Task).filter(Task.id == id).first()
@@ -105,12 +104,12 @@ class TaskRepository(Repository[Task]):
             session.commit()
             session.refresh(task)
             return task
-
+        
     def delete(self, id: int) -> None:
         with Session() as session:
             task = session.query(Task).filter(Task.id == id).first()
             if task is None:
                 raise ValueError(f"Task with id {id} not found")
-
+            
             session.delete(task)
             session.commit()

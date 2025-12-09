@@ -7,7 +7,7 @@ from repositories.repositories import *
 load_dotenv()
 
 project_repository = ProjectRepository()
-
+    
 
 def create_project(name: str, description: str) -> Project:
     projects = project_repository.get_all()
@@ -17,15 +17,15 @@ def create_project(name: str, description: str) -> Project:
         if name == project.name:
             raise ProjectNameAlreadyExists
     return project_repository.add(name, description)
+    
 
-
-def list_projects() -> List[Project]:
+def list_projects() -> List[Project] :
     return project_repository.get_all()
 
 
 def validate_project_id(target_id: int) -> int:
     project = project_repository.get(target_id)
-    if project != None:
+    if project != None :
         return target_id
     else:
         raise ProjectNotFound
@@ -33,7 +33,7 @@ def validate_project_id(target_id: int) -> int:
 
 def edit_project(target_id: int, name: str = None, description: str = None) -> Project:
     validate_project_id(target_id)
-    return project_repository.update(target_id, name, description)
+    return project_repository.update(target_id, name, description)   
 
 
 def delete_project(target_id: int) -> None:
