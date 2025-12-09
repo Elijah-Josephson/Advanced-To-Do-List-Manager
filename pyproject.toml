@@ -1,0 +1,24 @@
+[project]
+name = "advanced-to-do-list-manager"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "iliyayo",email = "iliya.yousefi.real@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "requests (>=2.32.5,<3.0.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)",
+    "sqlalchemy (>=2.0.44,<3.0.0)",
+    "alembic (>=1.17.2,<2.0.0)",
+    "psycopg2 (>=2.9.11,<3.0.0)",
+    "schedule (>=1.2.2,<2.0.0)",
+    "fastapi[standard] (>=0.123.7,<0.124.0)",
+    "pydantic (>=2.12.5,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
