@@ -1,9 +1,16 @@
-from datetime import datetime, date
+import datetime
 
-def autoclose_overdue(task_service):
-    now_date = date.today()
-    tasks = task_service.list_overdue(now_date)
-    for task in tasks:
-        task_service.set_task_status_by_id(task.id, StatEnum.done)
-        task_service.set_closed_at(task.id, datetime.utcnow())
-    return len(tasks)
+from repositories import *
+
+def close_overdue():
+    scheduler_repository = TaskRepository
+    for task in scheduler_repository.get_all():
+        if task.deadline < datetime.now() :
+            inputs : TaskDict = {
+                "name" = task.name,
+                "description" = task.description,
+                "status" = "done",
+                "deadline" = task.deadline,
+                "project_id" = task.project_id
+            }
+            scheduler_repository.update(task.id, inputs)
